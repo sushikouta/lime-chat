@@ -14,19 +14,12 @@
         if (userId == undefined || loginToken == undefined) {
             window.location.href = '/account'
         } else {
-            try {
-                let response: {
-                    'success': boolean,
-                    'message': string
-                } = (await axios.get(`${import.meta.env.VITE_HOST}:${import.meta.env.VITE_PORT}/api/account/logged?userId=${userId}&loginToken=${loginToken}`)).data
+            let response: {
+                'success': boolean,
+                'message': string
+            } = (await axios.get(`${import.meta.env.VITE_URL}/api/account/logged?userId=${userId}&loginToken=${loginToken}`)).data
 
-                if (!response.success) {
-                    cookies.remove('userId')
-                    cookies.remove('loginToken')
-
-                    window.location.href = '/account'
-                }
-            } catch (e) {
+            if (!response.success) {
                 cookies.remove('userId')
                 cookies.remove('loginToken')
 
