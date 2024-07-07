@@ -1,5 +1,5 @@
 import { sveltekit } from '@sveltejs/kit/vite'
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 import { Server } from 'socket.io'
 import axios from 'axios'
 import type { Message } from '$lib/database'
@@ -8,6 +8,8 @@ function websocketPlugin(mode: string) {
 	return {
 		name: 'websocket',
 		configureServer(server: any) {
+			let env = loadEnv(mode, process.cwd(), '')
+
 			let io = new Server(server.httpServer)
 
 			const messageLimit = 30
@@ -28,7 +30,7 @@ function websocketPlugin(mode: string) {
 						'success': boolean,
 						'message': string,
 						'messages': Message[]
-					} = (await axios.get(`${import.meta.env.VITE_URL}/api/room/messages?userId=${data.userId}&loginToken=${data.loginToken}&roomId=${data.roomId}&limit=${data.limit || messageLimit}`)).data
+					} = (await axios.get(`${env.VITE_URL}/api/room/messages?userId=${data.userId}&loginToken=${data.loginToken}&roomId=${data.roomId}&limit=${data.limit || messageLimit}`)).data
 
 					if (response.success) {
 						userId = data.userId
@@ -60,7 +62,7 @@ function websocketPlugin(mode: string) {
 						'success': boolean,
 						'message': string,
 						'sendMessage': Message
-					} = (await axios.get(`${import.meta.env.VITE_URL}/api/room/send?userId=${data.userId}&loginToken=${data.loginToken}&roomId=${roomId}&contentText=${data.contentText}`)).data
+					} = (await axios.get(`${env.VITE_URL}/api/room/send?userId=${data.userId}&loginToken=${data.loginToken}&roomId=${roomId}&contentText=${data.contentText}`)).data
 
 					if (response.success) {
 						io.in(roomId).emit('message', JSON.stringify(response.sendMessage))
