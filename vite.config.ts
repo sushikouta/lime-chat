@@ -14,10 +14,9 @@ function websocketPlugin(mode: string) {
 
 			const messageLimit = 30
 
-			io.on('connection', socket => {
-				let userId: string
-				let roomId: string
+			let socketData: any = {}
 
+			io.on('connection', socket => {
 				socket.on('join', async message => {
 					let data: {
 						'userId': string,
@@ -33,15 +32,17 @@ function websocketPlugin(mode: string) {
 					} = (await axios.get(`${env.VITE_URL}/api/room/messages?userId=${data.userId}&loginToken=${data.loginToken}&roomId=${data.roomId}&limit=${data.limit || messageLimit}`)).data
 
 					if (response.success) {
-						userId = data.userId
-						roomId = data.roomId
-
-						socket.join(roomId)
+						socket.join(data.roomId)
 
 						socket.emit('init', JSON.stringify({
 							success: true,
 							messages: response.messages
 						}))
+
+						socketData[socket.id] = {
+							userId: data.userId,
+							roomId: data.roomId 
+						}
 					} else {
 						socket.emit('init', JSON.stringify({
 							success: false,
@@ -62,10 +63,10 @@ function websocketPlugin(mode: string) {
 						'success': boolean,
 						'message': string,
 						'sendMessage': Message
-					} = (await axios.get(`${env.VITE_URL}/api/room/send?userId=${data.userId}&loginToken=${data.loginToken}&roomId=${roomId}&contentText=${data.contentText}`)).data
+					} = (await axios.get(`${env.VITE_URL}/api/room/send?userId=${data.userId}&loginToken=${data.loginToken}&roomId=${socketData[socket.id].roomId}&contentText=${data.contentText}`)).data
 
 					if (response.success) {
-						io.in(roomId).emit('message', JSON.stringify(response.sendMessage))
+						io.in(socketData[socket.id].roomId).emit('message', JSON.stringify(response.sendMessage))
 					}
 				})
 			})
