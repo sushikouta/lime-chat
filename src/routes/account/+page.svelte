@@ -25,7 +25,7 @@
                 let response: {
                     'success': boolean,
                     'message': string
-                } = (await axios.get(`${import.meta.env.VITE_HOST}:${import.meta.env.VITE_PORT}/api/account/logged?userId=${userId}&loginToken=${loginToken}`)).data
+                } = (await axios.get(`${import.meta.env.VITE_URL}/api/account/logged?userId=${userId}&loginToken=${loginToken}`)).data
 
                 if (response.success) {
                 logged = true
@@ -50,7 +50,7 @@
                     'displayName': string,
                     'description': string
                 }
-            } = (await axios.get(`${import.meta.env.VITE_HOST}:${import.meta.env.VITE_PORT}/api/account/profile?userId=${userId}`)).data
+            } = (await axios.get(`${import.meta.env.VITE_URL}/api/account/profile?userId=${userId}`)).data
 
             if (response.success) {
                 profile = response.profile
@@ -101,7 +101,7 @@
             'message': string,
             'userId': string
             'loginToken': string,
-        } = (await axios.get(`${import.meta.env.VITE_HOST}:${import.meta.env.VITE_PORT}/api/account/login?username=${username}&password=${password}`)).data
+        } = (await axios.get(`${import.meta.env.VITE_URL}/api/account/login?username=${username}&password=${password}`)).data
 
         if (response.success) {
             cookies.set('userId',     response.userId,     { expires: 7 })
@@ -122,7 +122,7 @@
 
         let loginToken = cookies.get('loginToken')
 
-        await axios.get(`${import.meta.env.VITE_HOST}:${import.meta.env.VITE_PORT}/api/account/logout?loginToken=${loginToken}`)
+        await axios.get(`${import.meta.env.VITE_URL}/api/account/logout?loginToken=${loginToken}`)
 
         cookies.remove('loginToken')
 

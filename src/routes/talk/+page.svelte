@@ -40,7 +40,7 @@
                 let response: {
                     'success': boolean,
                     'message': string
-                } = (await axios.get(`http://localhost:${import.meta.env.VITE_PORT}/api/account/logged?userId=${userId}&loginToken=${loginToken}`)).data
+                } = (await axios.get(`${import.meta.env.VITE_URL}/api/account/logged?userId=${userId}&loginToken=${loginToken}`)).data
 
                 if (!response.success) {
                     cookies.remove('userId')
@@ -69,7 +69,7 @@
 
         websocketLoading = true
 
-        socket = io('http://localhost:5173/')
+        socket = io(import.meta.env.VITE_URL)
 
         socket.on('connect', () => {
             socket.emit('join', JSON.stringify({
