@@ -49,7 +49,13 @@ export async function GET({ url }) {
 
     let messageId = crypto.randomUUID()
 
-    client.insert('messages', `'${messageId}', ${((await client.select('index', 'messages', `room_id = '${roomId}'`, 'ORDER BY index DESC LIMIT 1'))[0].index || 0) + 1}, DEFAULT, '${contentText}', '${roomId}', '${userId}', DEFAULT`)
+    let index = 1
+
+    if (await client.exists('*', 'messages', `room_id = '${roomId}'`)) {
+        index = (await client.select('index', 'messages', `room_id = '${roomId}'`, 'ORDER BY index DESC LIMIT 1'))[0].index + 1
+    }
+
+    client.insert('messages', `'${messageId}', ${index}, DEFAULT, '${contentText}', '${roomId}', '${userId}', DEFAULT`)
 
     return json({
         success: true,
