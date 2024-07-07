@@ -28,7 +28,7 @@ function websocketPlugin(mode: string) {
 						'success': boolean,
 						'message': string,
 						'messages': Message[]
-					} = (await axios.get(`http://localhost:5173/api/room/messages?userId=${data.userId}&loginToken=${data.loginToken}&roomId=${data.roomId}&limit=${data.limit || messageLimit}`)).data
+					} = (await axios.get(`${import.meta.env.VITE_URL}/api/room/messages?userId=${data.userId}&loginToken=${data.loginToken}&roomId=${data.roomId}&limit=${data.limit || messageLimit}`)).data
 
 					if (response.success) {
 						userId = data.userId
@@ -60,7 +60,7 @@ function websocketPlugin(mode: string) {
 						'success': boolean,
 						'message': string,
 						'sendMessage': Message
-					} = (await axios.get(`http://localhost:5173/api/room/send?userId=${data.userId}&loginToken=${data.loginToken}&roomId=${roomId}&contentText=${data.contentText}`)).data
+					} = (await axios.get(`${import.meta.env.VITE_URL}/api/room/send?userId=${data.userId}&loginToken=${data.loginToken}&roomId=${roomId}&contentText=${data.contentText}`)).data
 
 					if (response.success) {
 						io.in(roomId).emit('message', JSON.stringify(response.sendMessage))
