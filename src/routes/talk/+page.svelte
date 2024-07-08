@@ -29,6 +29,12 @@
 
     let sending = false
 
+    let notificationTime = 0
+    let notificationCounter: NodeJS.Timeout
+    let notificationCount = 0
+
+    let focused = true
+
     async function main() {
         userId = cookies.get('userId')
         loginToken = cookies.get('loginToken')
@@ -86,14 +92,23 @@
                 'messages': Message[]
             } = JSON.parse(message)
 
-            if (!data.success) {
-                throwError(data.message)
-                socket.close()
-            } else {
+            if (data.success) {
                 messages = [...data.messages.reverse()]
                 websocketLoading = false
+            } else {
+                throwError(data.message)
+                socket.close()
             }
         })
+
+        window.onfocus = () => {
+            focused = true
+            notificationCount = 0
+            document.title = 'Lime chat'
+        }
+        window.onblur = () => {
+            focused = false
+        }
 
         socket.on('message', message => {
             let data: Message = JSON.parse(message)
@@ -107,6 +122,27 @@
                     sending = false
                 }
             }
+
+            notificationTime = 1000
+            
+            if (!focused) {
+                notificationCount++
+                document.title = `[${notificationCount}] Lime chat`
+            }
+
+            if (notificationCounter) {
+                clearInterval(notificationCounter)
+            }
+            notificationCounter = setInterval(() => {
+                if (notificationTime-- == 0) {
+                    clearInterval(notificationCounter)
+                }
+            }, 10)
+
+            let notification = document.querySelector('#notification')! as HTMLElement
+            let notificationSpace = document.querySelector('#notification-space')! as HTMLElement
+
+            notificationSpace.style.height = (notification.clientHeight + 10) + 'px'
         })
     }
 
@@ -133,11 +169,19 @@
         </div>
     {:else}
         <div class="h-[100%] p-[20px]">
-            <div class="overflow-auto h-[calc(100%-40px)]">
+            <div class="overflow-auto h-[calc(100%-40px)]" id="message-container">
                 {#if websocketLoading}
                     <div class="mt-[50vh] translate-y-[-50%] text-center text-xl">接続中...</div>
                 {:else}
                     {#if messages.length}
+                        <div class="fixed max-w-[940px] w-[calc(100%-60px)] px-[15px] py-[10px] bg-white rounded-[10px] shadow-md translate-x-[10px]" class:visibility-hidden={notificationTime == 0}  id="notification">
+                            <p class="has-text-primary mb-[5px] font-bold">最新のメッセージ</p>
+                            <div class="ml-[10px] mb-[10px]">
+                                <MessageNode content={messages[messages.length - 1]} />
+                            </div>
+                            <progress class="progress is-small is-primary mb-[5px]" value={notificationTime} max="1000" />
+                        </div>
+                        <div class="w-[auto]" id="notification-space"></div>
                         {#each messages as message}
                             <div class="mb-[10px]">
                                 <MessageNode content={message} />
@@ -157,3 +201,9 @@
 {:else}
     <div class="mt-[50vh] translate-y-[-50%] text-center text-xl">Now Loading...</div>
 {/if}
+
+<style lang="scss">
+    .visibility-hidden {
+        visibility: hidden;
+    }
+</style>
