@@ -161,7 +161,7 @@
 
 {#if loaded}
     {#if isError}
-        <div class="flex has-text-danger mt-[50vh] translate-y-[-50%] mx-[auto] items-center justify-center">
+        <div class="flex has-text-danger translate-y-[50vh] mx-[auto] items-center justify-center">
             <div class="icon mr-[10px] my-[auto]">
                 <i class="fa-solid fa-circle-exclamation"></i>
             </div>
@@ -171,7 +171,7 @@
         <div class="h-[100%] p-[20px]">
             <div class="overflow-auto h-[calc(100%-40px)]" id="message-container">
                 {#if websocketLoading}
-                    <div class="mt-[50vh] translate-y-[-50%] text-center text-xl">接続中...</div>
+                    <div class="translate-y-[calc(50vh-20px)] text-center text-xl">接続中...</div>
                 {:else}
                     {#if messages.length}
                         <div class="fixed max-w-[940px] w-[calc(100%-60px)] px-[15px] py-[10px] bg-white rounded-[10px] shadow-md translate-x-[10px]" class:visibility-hidden={notificationTime == 0}  id="notification">
@@ -199,7 +199,7 @@
         </div>
     {/if}
 {:else}
-    <div class="mt-[50vh] translate-y-[-50%] text-center text-xl">Now Loading...</div>
+    <div class="translate-y-[50vh] text-center text-xl">Now Loading...</div>
 {/if}
 
 <style lang="scss">

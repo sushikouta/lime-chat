@@ -198,7 +198,7 @@
         {/if}
     </div>
 {:else}
-    <div class="mt-[50vh] translate-y-[-50%] text-center text-xl">Now Loading...</div>
+    <div class="pt-[100%] translate-y-[-50%] text-center text-xl">Now Loading...</div>
 {/if}
 
 <style lang="scss">

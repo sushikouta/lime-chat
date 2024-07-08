@@ -48,5 +48,5 @@
         <Room loginData={loginData} roomId="b3b71367-c354-3062-0b46-22c5eba67477" />
     </div>
 {:else}
-    <div class="mt-[50vh] translate-y-[-50%] text-center text-xl">Now Loading...</div>
+    <div class="translate-y-[50vh] text-center text-xl">Now Loading...</div>
 {/if}
